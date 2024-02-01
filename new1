@@ -1,0 +1,27 @@
+#!/usr/bin/expect -f
+
+# Set timeout
+set timeout 30
+
+# Run Certbot command to obtain a new certificate
+spawn sudo certbot --nginx
+
+# Expect Certbot output
+expect {
+    "Select the appropriate number" {
+        # Certbot is asking for selection; choose the default (usually the first option)
+        send "\r"
+        exp_continue
+    }
+    eof {
+        # End of file, script is finished
+        exit
+    }
+}
+
+# If we reach this point, something unexpected happened
+puts "Unexpected output from Certbot"
+
+# Exit the script
+exit 1
+

@@ -1,0 +1,27 @@
+#!/usr/bin/expect -f
+
+# Set timeout
+set timeout 30
+
+# Run Certbot command to check renewal status
+spawn sudo certbot renew --dry-run
+
+# Expect Certbot output
+expect {
+    "Certificate not yet due for renewal" {
+        # Certificate not due for renewal; no action needed
+        puts "Certificate not due for renewal; no action taken."
+    }
+    "Would you like to renew it?" {
+        # Certificate is due for renewal; interact to renew
+        send "yes\r"
+        exp_continue
+    }
+    default {
+        # Unexpected output, handle accordingly
+        puts "Unexpected output from Certbot"
+    }
+}
+
+expect eof
+

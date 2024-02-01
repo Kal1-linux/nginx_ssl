@@ -1,0 +1,27 @@
+#!/usr/bin/expect
+
+spawn sudo certbot --nginx
+
+expect {
+    "Which names would you like to activate HTTPS for?" {
+        send "\r"
+        exp_continue
+    }
+    "What would you like to do?" {
+        send "2\r"
+        exp_continue
+    }
+    "Deploying certificate" {
+        puts "Certificate renewed and deployed successfully."
+        exit
+    }
+    timeout {
+        puts "Timeout occurred. Exiting."
+        exit
+    }
+    eof {
+        puts "Unexpected EOF. Exiting."
+        exit
+    }
+}
+

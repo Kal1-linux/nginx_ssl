@@ -1,0 +1,51 @@
+#!/usr/bin/expect -f
+
+# Set timeout
+set timeout 30
+
+# Run Certbot command to renew the certificate
+spawn sudo certbot --nginx
+
+# Expect Certbot output
+expect {
+    "Which names would you like to activate HTTPS for?" {
+        # Choose all options (press Enter)
+        send "\r"
+        exp_continue
+    }
+    -re "Select the appropriate number \[1-2\] then \[enter\] \(press 'c' to cancel\):" {
+        # Choose option 2 for renew & replace
+        send "2\r"
+        exp_continue
+    }
+    -re "Certificate not yet due for renewal" {
+        # Certificate not due for renewal; no action needed
+        puts "Certificate not due for renewal; no action taken."
+    }
+    -re "Select the appropriate number \[1-2\] then \[enter\] \(press 'c' to cancel\):" {
+        # Choose option 2 for renew & replace
+        send "2\r"
+        exp_continue
+    }
+    -re "Successfully received certificate." {
+        # Certificate renewal successful
+        puts "Certificate renewal successful."
+    }
+    -re "Successfully deployed certificate for done.qwiksavings.com" {
+        # Certificate deployment successful
+        puts "Certificate deployment successful."
+    }
+    eof {
+        # End of the expect script
+        puts "Certbot command completed."
+    }
+    timeout {
+        # Timeout occurred
+        puts "Timeout occurred while waiting for Certbot output."
+    }
+    default {
+        # Unexpected output, handle accordingly
+        puts "Unexpected output from Certbot"
+    }
+}
+
